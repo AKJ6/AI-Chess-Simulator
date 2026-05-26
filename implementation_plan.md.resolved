@@ -1,0 +1,59 @@
+# Goal
+Build a local AI-vs-AI chess simulator in Python using PySide6 for the GUI and JSON for persistent board state storage. The simulator will host two models (e.g., quantized LLMs) playing against each other automatically, with full programmatic enforcement of chess rules, state persistence, and GUI updates.
+
+## User Review Required
+> [!IMPORTANT]
+> The application will enforce complete chess validation and track states. Let me know if you approve this plan before I proceed with the execution.
+
+## Open Questions
+> [!WARNING]
+> 1. **LLM Integration**: Downloading and running actual quantized LLMs locally can be computationally heavy and requires specific hardware setups (e.g., `llama.cpp` or transformers). For the initial version, should I implement the `model_loader.py` with a **Mock AI** (e.g., one that picks a random valid move or uses a simple evaluation function) so we can test the GUI and game loop first? We can plug in real LLMs once the core logic works.
+> 2. **Piece Assets**: Should I generate simple placeholder SVG images for the chess pieces to place in `assets/white_pieces` and `assets/black_pieces`, or do you have existing assets you want to use?
+> 3. **Chess Logic**: The instructions say "Implement complete chess validation". Should I write this completely from scratch, or is it permissible to wrap a robust existing library like `python-chess` for the validation engine while adhering to the JSON board state requirement? (Writing a flawless chess engine from scratch is quite time-consuming, but I will do it if strictly required).
+
+## Proposed Changes
+
+### Project Structure & Setup
+- Initialize the directory structure as specified in the instructions (`models/`, `ui/`, `assets/`, `utils/`).
+- Setup a `requirements.txt` containing `PySide6`.
+
+#### [NEW] main.py
+Entry point that initializes the PySide6 application, loads the models, and starts the GUI and game loop.
+
+#### [NEW] controller.py
+The main orchestrator that alternates turns, calls the AI models for moves, validates moves using `move_validator.py`, updates the state, and triggers GUI updates.
+
+#### [NEW] model_loader.py
+Interface for loading and querying the AI models. Will start with a mock/random implementation if agreed upon, or use local LLM bindings if required.
+
+#### [NEW] move_validator.py & game_rules.py
+Implements the chess rules (valid moves, check, checkmate, stalemate, castling, en passant, promotion). Validates AI suggestions before they are accepted.
+
+#### [NEW] state_manager.py & logger.py
+`state_manager.py` will handle reading/writing the 8x8 board representation to `board_state.json`.
+`logger.py` will record each valid move and game events to `history_log.json`.
+
+#### [NEW] utils/
+- `constants.py`: Piece values (Pawn=1, Knight=4, etc.), starting board configurations, and colors.
+- `json_utils.py`: Helpers for JSON serialization.
+- `move_utils.py`: Coordinate translation (e.g., standard algebraic notation to matrix indices).
+
+#### [NEW] ui/
+- `main_window.py`: PySide6 Main Window integrating the board and panels.
+- `chess_board_widget.py`: Custom widget to render the 8x8 grid and piece assets.
+- `control_panel.py`: Buttons for Start, Pause, Reset, and move history display.
+- `styles.qss`: CSS-like styling for PySide6 widgets to ensure a clean UI.
+
+#### [NEW] JSON Files
+- `board_state.json`: The live 8x8 JSON matrix of the board.
+- `history_log.json`: The append-only log of moves.
+- `config.json`: Settings like move delay and active model names.
+
+## Verification Plan
+### Automated/Manual Tests
+- Start the application using `python main.py`.
+- Verify the PySide6 GUI loads and displays the starting chess board correctly.
+- Click "Start" and observe the two AIs taking turns.
+- Verify that pieces move on the GUI and that `board_state.json` updates accordingly.
+- Verify illegal moves are rejected and logged appropriately.
+- Ensure stalemates correctly sum remaining piece values as per the instructions.

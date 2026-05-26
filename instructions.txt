@@ -1,0 +1,321 @@
+Build a local AI-vs-AI chess application in Python where two LLM-based agents play chess against each other automatically. The application must use PySide6 for the GUI and JSON for persistent board state storage.
+
+========================================
+PROJECT GOAL
+========================================
+
+Create a chess simulator where:
+- Two AI chatbots/models play against each other
+- Each model controls one color only
+- The game board is stored in JSON
+- Chess rules are enforced programmatically
+- The GUI updates live using PySide6
+- Turns alternate automatically
+- All moves are logged
+- Stalemates are resolved using remaining piece values
+
+========================================
+TECH STACK
+========================================
+
+Language:
+- Python 3
+
+GUI:
+- PySide6
+
+Models:
+- Quantized local models
+- Example:
+  - Qwen
+  - Gemma
+
+Storage:
+- JSON files
+
+========================================
+FILE STRUCTURE
+========================================
+
+project_root/
+│
+├── main.py
+│
+├── controller.py
+├── model_loader.py
+├── move_validator.py
+├── state_manager.py
+├── game_rules.py
+├── logger.py
+│
+├── board_state.json
+├── history_log.json
+├── config.json
+│
+├── models/
+│   ├── Qwen/
+│   │   ├── model files
+│   │   └── tokenizer files
+│   │
+│   └── Gemma/
+│       ├── model files
+│       └── tokenizer files
+│
+├── ui/
+│   ├── main_window.py
+│   ├── chess_board_widget.py
+│   ├── control_panel.py
+│   └── styles.qss
+│
+├── assets/
+│   ├── white_pieces/
+│   └── black_pieces/
+│
+└── utils/
+    ├── json_utils.py
+    ├── move_utils.py
+    └── constants.py
+
+========================================
+APPLICATION FLOW
+========================================
+
+1. main.py starts the application
+2. Load GUI
+3. Load both AI models into memory
+4. Initialize chess board JSON
+5. Controller starts game loop
+6. Current AI receives board state
+7. AI suggests a move
+8. Move validator checks legality
+9. If valid:
+   - update JSON
+   - update GUI
+   - log move
+   - switch turn
+10. Repeat until:
+   - checkmate
+   - stalemate
+   - illegal move limit
+   - max move limit
+
+========================================
+BOARD REPRESENTATION
+========================================
+
+Store board as an 8x8 JSON matrix.
+
+Each square contains either:
+- null
+OR
+- a piece object
+
+Example piece object:
+
+{
+    "type": "pawn",
+    "value": 1,
+    "color": "white",
+    "has_moved": false
+}
+
+========================================
+PIECE VALUES
+========================================
+
+Pawn = 1
+Knight = 4
+Bishop = 4.5
+Rook = 5
+Queen = 9
+King = 11
+
+========================================
+STARTING BOARD FORMAT
+========================================
+
+Example:
+
+[
+  [
+    {"type":"rook","value":5,"color":"black"},
+    {"type":"knight","value":4,"color":"black"},
+    ...
+  ],
+  ...
+]
+
+========================================
+MOVE VALIDATION RULES
+========================================
+
+Implement complete chess validation:
+- Pawn movement
+- Pawn capture
+- Double pawn first move
+- En passant
+- Promotion
+- Knight L movement
+- Bishop diagonals
+- Rook straight lines
+- Queen combined movement
+- King one-step movement
+- Castling
+- Check detection
+- Checkmate detection
+- Stalemate detection
+
+Moves must fail if:
+- Piece belongs to wrong player
+- Destination invalid
+- Path blocked
+- King remains in check
+
+========================================
+MODEL RESPONSIBILITY
+========================================
+
+White AI:
+- Can only move white pieces
+
+Black AI:
+- Can only move black pieces
+
+Both models:
+- Receive entire board state
+- Return move suggestion in structured format
+
+========================================
+MOVE FORMAT
+========================================
+
+Use standardized move JSON:
+
+{
+    "from": [6,4],
+    "to": [4,4]
+}
+
+========================================
+CONTROLLER RESPONSIBILITIES
+========================================
+
+controller.py must:
+- Alternate turns
+- Call correct model
+- Validate moves
+- Update state
+- Update GUI
+- Handle errors
+- Detect endgame
+- Trigger stalemate scoring
+
+========================================
+STALEMATE LOGIC
+========================================
+
+If stalemate occurs:
+- Sum remaining piece values
+- Team with higher score wins
+
+Example:
+White remaining = 22
+Black remaining = 17
+
+Winner = White
+
+========================================
+MODEL LOADER
+========================================
+
+model_loader.py should:
+- Load quantized models
+- Keep them cached in RAM
+- Provide unified inference API
+
+Example:
+
+generate_move(board_state, current_turn)
+
+========================================
+STATE MANAGER
+========================================
+
+state_manager.py should:
+- Read JSON board
+- Write JSON board
+- Reset game
+- Save move history
+
+========================================
+LOGGER
+========================================
+
+history_log.json should contain:
+- Move number
+- Current player
+- Move coordinates
+- Captures
+- Check/checkmate state
+- Timestamp
+
+========================================
+GUI REQUIREMENTS
+========================================
+
+PySide6 GUI must include:
+- Visual chess board
+- Piece rendering
+- Current turn display
+- Start game button
+- Pause button
+- Reset button
+- Move history panel
+- Current AI indicator
+- Game result popup
+
+========================================
+OPTIONAL FEATURES
+========================================
+
+Add support for:
+- Adjustable move delay
+- AI thinking animation
+- Move highlighting
+- Replay mode
+- Evaluation score display
+- Multiple board themes
+
+========================================
+PERFORMANCE REQUIREMENTS
+========================================
+
+Application should:
+- Run locally on CPU
+- Support 16GB RAM systems
+- Use quantized models for efficiency
+- Avoid reloading models every turn
+
+========================================
+IMPORTANT DESIGN RULES
+========================================
+
+- Keep modules decoupled
+- Separate UI from game logic
+- Never let models directly modify board state
+- All moves must pass validator first
+- JSON is the single source of truth
+- Maintain clean, scalable architecture
+
+========================================
+FINAL GOAL
+========================================
+
+Produce a fully functional local AI-vs-AI chess simulator with:
+- PySide6 GUI
+- JSON state management
+- Local quantized LLMs
+- Complete chess rules
+- Move logging
+- Automatic gameplay
+- Modular architecture
