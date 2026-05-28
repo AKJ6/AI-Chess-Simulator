@@ -43,3 +43,6 @@ history_log.json
 # Temporary files
 tmp/
 temp/
+
+#txt files
+*.txt
