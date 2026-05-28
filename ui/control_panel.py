@@ -26,6 +26,12 @@ class ControlPanel(QWidget):
         
         self.layout.addLayout(self.btn_layout)
         
+        # Models Info
+        self.white_model_label = QLabel("White Model: Unknown")
+        self.black_model_label = QLabel("Black Model: Unknown")
+        self.layout.addWidget(self.white_model_label)
+        self.layout.addWidget(self.black_model_label)
+        
         # Log Box
         self.log_label = QLabel("Game History:")
         self.layout.addWidget(self.log_label)
@@ -39,3 +45,7 @@ class ControlPanel(QWidget):
         
     def clear_log(self):
         self.log_box.clear()
+
+    def set_model_names(self, white_name, black_name):
+        self.white_model_label.setText(f"White Model: {white_name}")
+        self.black_model_label.setText(f"Black Model: {black_name}")

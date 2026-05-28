@@ -9,7 +9,7 @@ class GameRules:
         if board.is_stalemate() or board.is_insufficient_material() or board.is_seventyfive_moves() or board.is_fivefold_repetition():
             return "stalemate"
         if board.is_check():
-            return "check"
+            return "ongoing"
         return "ongoing"
 
     @staticmethod

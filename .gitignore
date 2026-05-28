@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+.env/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Model files
+models/
+
+# Hugging Face cache
+.cache/
+huggingface/
+
+# Large AI files
+*.gguf
+*.bin
+*.safetensors
+
+# JSON runtime files
+history_log.json
+
+# Qt build/cache
+*.qmlc
+*.jsc
+
+# Temporary files
+tmp/
+temp/

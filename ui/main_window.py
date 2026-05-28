@@ -25,11 +25,24 @@ class MainWindow(QMainWindow):
         
         layout = QHBoxLayout(central_widget)
         
+        from PySide6.QtCore import Qt
+        
         self.board_widget = ChessBoardWidget(self)
-        layout.addWidget(self.board_widget, stretch=2)
+        self.board_widget.setFixedSize(480, 480)
+        
+        board_container = QWidget(self)
+        board_layout = QHBoxLayout(board_container)
+        board_layout.addWidget(self.board_widget)
+        board_layout.setAlignment(Qt.AlignCenter)
+        
+        layout.addWidget(board_container, stretch=2)
         
         self.control_panel = ControlPanel(self)
         layout.addWidget(self.control_panel, stretch=1)
+        
+        white_path = os.path.basename(self.controller.model_loader.model_path_white) if self.controller.model_loader.model_path_white else "None"
+        black_path = os.path.basename(self.controller.model_loader.model_path_black) if self.controller.model_loader.model_path_black else "None"
+        self.control_panel.set_model_names(white_path, black_path)
 
     def _load_styles(self):
         style_path = os.path.join(os.path.dirname(__file__), 'styles.qss')

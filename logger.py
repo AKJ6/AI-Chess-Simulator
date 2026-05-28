@@ -22,8 +22,11 @@ class Logger:
             "timestamp": datetime.datetime.now().isoformat()
         }
         
-        with open(self.filepath, 'r') as f:
-            data = json.load(f)
+        try:
+            with open(self.filepath, 'r') as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            data = []
             
         data.append(log_entry)
         

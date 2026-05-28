@@ -18,16 +18,20 @@ class GameController(QObject):
         self.state_manager = StateManager()
         self.logger = Logger()
         self.validator = MoveValidator(self.board)
-        self.model_loader = ModelLoader("models/Qwen", "models/Gemma")
+        self.model_loader = ModelLoader("models/gemma-4-E4B-it-Q8_0.gguf", "models/gemma-4-E4B-it-Q8_0.gguf")
         
         self.delay_ms = delay_ms
         self.timer = QTimer()
         self.timer.timeout.connect(self.play_turn)
         
         self.is_playing = False
+        self.is_game_over_state = False
         self.move_count = 0
 
     def start_game(self):
+        if self.is_game_over_state:
+            self.log_updated.emit("Game is over. Please reset to play again.")
+            return
         if not self.is_playing:
             self.is_playing = True
             self.timer.start(self.delay_ms)
@@ -42,6 +46,7 @@ class GameController(QObject):
         self.pause_game()
         self.board.reset()
         self.move_count = 0
+        self.is_game_over_state = False
         self.logger.clear()
         self._update_state()
         self.log_updated.emit("Game reset.")
@@ -87,6 +92,11 @@ class GameController(QObject):
                 
                 self.log_updated.emit(f"Move {self.move_count}: {color_str} played {move_obj.uci()}")
                 self._update_state()
+                
+                if check_state == "check":
+                    self.log_updated.emit(f"Check! Game paused. Press Start to resume.")
+                    self.pause_game()
+
             else:
                 self.log_updated.emit(f"Error: {color_str} attempted illegal move {move_json}. {result}")
                 self.pause_game()
@@ -95,6 +105,7 @@ class GameController(QObject):
             self.pause_game()
 
     def _handle_game_over(self, status):
+        self.is_game_over_state = True
         self.pause_game()
         if status == "checkmate":
             winner = "Black" if self.board.turn == chess.WHITE else "White"
