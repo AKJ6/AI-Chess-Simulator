@@ -196,13 +196,3 @@ These are intentional or pending differences between `instructions.txt` / `imple
 7. **Effectively unbounded retries.** `max_retries` in `model_loader.py` is `10000`, so a stuck model can loop for a very long time before giving up.
 8. **Minor dead imports.** `COLOR_MAP` / `json_move_to_uci` are imported but unused in `model_loader.py`.
 
----
-
-## 9. Suggested next steps
-
-- Introduce the planned `config.json` (model paths, move delay, retry cap) and load it in the controller.
-- Remove the check-pause behavior (or make it a toggle) so full games run unattended.
-- Add a hard move cap and illegal-move cap to guarantee termination.
-- Surface a live material-score / evaluation readout and current-turn indicator in the control panel.
-- Add the optional features from the brief: move highlighting, adjustable delay slider, replay mode, board themes.
-```
