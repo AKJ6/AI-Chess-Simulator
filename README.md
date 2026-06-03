@@ -181,18 +181,4 @@ python main.py
 ```
 Then click **Start Game**. Use **Pause** to halt and **Reset** to start a fresh game.
 
----
-
-## 8. Deviations from the original brief
-
-These are intentional or pending differences between `instructions.txt` / `implementation_plan.md.txt` and the actual code:
-
-1. **Rules engine.** Open question #3 in the plan (write chess from scratch vs. wrap a library) was resolved in favor of wrapping **`python-chess`**. The hand-written `move_validator.py` / `game_rules.py` are thin adapters over it.
-2. **Real LLMs, not a mock.** Open question #1 was resolved in favor of running actual local GGUF models via `llama-cpp-python` (no random/mock AI fallback exists).
-3. **`config.json` is not implemented.** Model paths and move delay are hard-coded in `controller.py`/`MainWindow` instead of read from a config file.
-4. **`has_moved` is heuristic.** In `board_to_json` it is only inferred for pawns (off their start rank); for kings/rooks it is always `false`. It's informational for the UI/model and not used by the rules engine.
-5. **Endgame limits not enforced.** The brief mentions an "illegal move limit" and "max move limit"; these are not implemented. Instead, an illegal/empty model response simply **pauses** the game.
-6. **Check pauses the game.** When a move gives check, the loop logs it and pauses (`Check! ... Press Start to resume`) rather than continuing automatically.
-7. **Effectively unbounded retries.** `max_retries` in `model_loader.py` is `10000`, so a stuck model can loop for a very long time before giving up.
-8. **Minor dead imports.** `COLOR_MAP` / `json_move_to_uci` are imported but unused in `model_loader.py`.
 
